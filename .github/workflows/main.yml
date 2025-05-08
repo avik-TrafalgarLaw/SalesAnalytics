@@ -1,0 +1,30 @@
+name: 🚀 FTP→GCS Daily Upload
+
+on:
+  schedule:
+    - cron: '30 15 * * *'   # 15:30 UTC = 21:00 IST
+  workflow_dispatch:
+
+jobs:
+  ftp_to_gcs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install google-cloud-storage
+
+      - name: Download and upload files
+        env:
+          FTP_HOST:      ${{ secrets.FTP_HOST }}
+          FTP_USER:      ${{ secrets.FTP_USER }}
+          FTP_PASS:      ${{ secrets.FTP_PASS }}
+          GCP_PROJECT_ID:${{ secrets.GCP_PROJECT_ID }}
+          GCP_SA_KEY:    ${{ secrets.GCP_SA_KEY }}
+          GCS_BUCKET:    ${{ secrets.GCS_BUCKET }}
+        run: python main.py
