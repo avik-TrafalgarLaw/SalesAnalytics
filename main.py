@@ -36,7 +36,9 @@ def download_file(remote_filename: str, local_path: str):
     """
     Download a file from the configured FTP server to a local path.
     """
-    with FTP(FTP_HOST, 21) as ftp:
+    # Use explicit connect/login to avoid passing port as user
+    with FTP() as ftp:
+        ftp.connect(FTP_HOST, 21)
         ftp.login(FTP_USER, FTP_PASS)
         with open(local_path, 'wb') as f:
             ftp.retrbinary(f'RETR {remote_filename}', f.write)
